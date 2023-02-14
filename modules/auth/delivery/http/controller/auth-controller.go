@@ -50,7 +50,7 @@ func (c *authController) Register(w http.ResponseWriter, r *http.Request) {
 	user.Password = string(hash)
 	result, err := authUsecase.Register(&user)
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
+		w.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(w).Encode(helper.ServiceError{Message: "Error register user"})
 		return
 	}
@@ -79,7 +79,7 @@ func (c *authController) Login(w http.ResponseWriter, r *http.Request) {
 
 	user, err := authUsecase.LoginWithUsername(userInput.Username)
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
+		w.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(w).Encode(helper.ServiceError{Message: "Invalid username or password"})
 		return
 	}

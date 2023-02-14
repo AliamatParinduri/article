@@ -1,9 +1,11 @@
 package main
 
 import (
-	loadEnv "article_app/helper"
+	"article_app/helper"
 	auth "article_app/modules/auth/delivery/http"
+	"article_app/repository"
 	"encoding/json"
+	"flag"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/joho/godotenv"
@@ -19,7 +21,7 @@ func main() {
 	}
 
 	r := mux.NewRouter()
-	port := loadEnv.GetEnv("APP_PORT", "8000")
+	port := helper.GetEnv("APP_PORT", "8000")
 
 	// CORS
 	headersOk := handlers.AllowedHeaders([]string{"X-Requested-With"})
@@ -37,7 +39,17 @@ func main() {
 
 	auth.AuthRouter(r)
 
-	log.Println("Server running on http://localhost:" + port)
-	log.Fatal(http.ListenAndServe(":"+port, handlers.CORS(originsOk, headersOk, methodsOk)(r)))
+	flag.Parse()
+	arg := flag.Arg(0)
+	if arg != "" {
+		InitCommands()
+	} else {
+		log.Println("Server running on http://localhost:" + port)
+		log.Fatal(http.ListenAndServe(":"+port, handlers.CORS(originsOk, headersOk, methodsOk)(r)))
+	}
+}
 
+func InitCommands() {
+	var serverPG = repository.ServerPG{}
+	serverPG.InitCommands()
 }

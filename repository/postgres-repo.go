@@ -1,14 +1,21 @@
 package repository
 
 import (
+	"article_app/database/seed"
 	"article_app/entity"
 	"article_app/helper"
 	"fmt"
 	"github.com/joho/godotenv"
+	"github.com/urfave/cli"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"log"
+	"os"
 )
+
+type ServerPG struct {
+	DB *gorm.DB
+}
 
 type DBConfig struct {
 	DBHost     string
@@ -18,7 +25,7 @@ type DBConfig struct {
 	DBPort     string
 }
 
-func InitialPostgres() *gorm.DB {
+func (s *ServerPG) InitialPostgres() *gorm.DB {
 	err := godotenv.Load()
 	if err != nil {
 		log.Fatalf("Error on loading .env file")
@@ -33,24 +40,53 @@ func InitialPostgres() *gorm.DB {
 	}
 
 	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable timeZone=Asia/Jakarta", DBConfig.DBHost, DBConfig.DBUser, DBConfig.DBPassword, DBConfig.DBName, DBConfig.DBPort)
-	db, err := gorm.Open(postgres.Open(dsn))
+	s.DB, err = gorm.Open(postgres.Open(dsn))
 
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalln(err)
 	}
-	dbMigrate(db)
 
-	return db
+	return s.DB
 }
 
-func dbMigrate(db *gorm.DB) {
+func (s *ServerPG) dbMigrate() {
 	var err error
 
 	for _, model := range entity.RegisterModelPG() {
-		if err = db.Debug().AutoMigrate(model.Model); err != nil {
+		if err = s.DB.Debug().AutoMigrate(model.Model); err != nil {
 			log.Fatal(err)
 		}
 	}
 
 	fmt.Println("Database migrated successfully")
+}
+
+func (s *ServerPG) InitCommands() {
+	s.InitialPostgres()
+
+	cmdApp := cli.NewApp()
+	cmdApp.Commands = []cli.Command{
+		{
+			Name: "db:migrate",
+			Action: func(c *cli.Context) error {
+				s.dbMigrate()
+				return nil
+			},
+		},
+		{
+			Name: "db:seed",
+			Action: func(c *cli.Context) error {
+				err := seed.DBSeed(s.DB)
+				if err != nil {
+					log.Fatalln(err)
+				}
+				return nil
+			},
+		},
+	}
+
+	err := cmdApp.Run(os.Args)
+	if err != nil {
+		log.Fatalln(err)
+	}
 }

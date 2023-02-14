@@ -10,7 +10,8 @@ import (
 )
 
 var (
-	DB         *gorm.DB           = pg.InitialPostgres()
+	server                        = pg.ServerPG{}
+	DB         *gorm.DB           = server.InitialPostgres()
 	jwtUsecase usecase.JWTUsecase = usecase.NewJWTUsecase()
 
 	authRepository repository.AuthRepository = repository.NewAuthRepository(DB)
