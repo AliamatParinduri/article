@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"article_app/entity"
+	"fmt"
 	"os"
 	"time"
 
@@ -10,6 +11,7 @@ import (
 
 type JWTUsecase interface {
 	GenerateToken(user *entity.User) string
+	Validate(token string) (*jwt.Token, error)
 }
 
 type JWTCustomClaims struct {
@@ -20,15 +22,15 @@ type JWTCustomClaims struct {
 	jwt.StandardClaims
 }
 
-type jwtUsecase struct {
-	secretKey string
-	issuer    string
+type JwtUsecase struct {
+	SecretKey string
+	Issuer    string
 }
 
 func NewJWTUsecase() JWTUsecase {
-	return &jwtUsecase{
-		secretKey: getSecretKey(),
-		issuer:    "AliamatParinduri-articleApp",
+	return &JwtUsecase{
+		SecretKey: getSecretKey(),
+		Issuer:    "AliamatParinduri-articleApp",
 	}
 }
 
@@ -40,7 +42,7 @@ func getSecretKey() string {
 	return secret
 }
 
-func (j *jwtUsecase) GenerateToken(user *entity.User) string {
+func (j *JwtUsecase) GenerateToken(user *entity.User) string {
 	claims := &JWTCustomClaims{
 		user.ID,
 		user.Name,
@@ -48,7 +50,7 @@ func (j *jwtUsecase) GenerateToken(user *entity.User) string {
 		user.IsAdmin,
 		jwt.StandardClaims{
 			ExpiresAt: time.Now().Add(time.Minute * 60).Unix(),
-			Issuer:    j.issuer,
+			Issuer:    j.Issuer,
 			IssuedAt:  time.Now().Unix(),
 		},
 	}
@@ -57,10 +59,21 @@ func (j *jwtUsecase) GenerateToken(user *entity.User) string {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
 	// generate encoded token pake secret key signing
-	t, err := token.SignedString([]byte(j.secretKey))
+	t, err := token.SignedString([]byte(j.SecretKey))
 	if err != nil {
 		panic(err)
 	}
 
 	return t
+}
+
+func (j *JwtUsecase) Validate(token string) (*jwt.Token, error) {
+	return jwt.Parse(token, func(token *jwt.Token) (interface{}, error) {
+		// signing method validation
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
+		}
+		//	return the secret signing key
+		return []byte(j.SecretKey), nil
+	})
 }

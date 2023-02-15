@@ -1,9 +1,9 @@
 package http
 
 import (
-	"article_app/modules/Auth/usecase"
-	"article_app/modules/auth/delivery/http/controller"
+	"article_app/modules/Auth/delivery/http/controller"
 	repository "article_app/modules/auth/repository/postgres"
+	"article_app/modules/auth/usecase"
 	pg "article_app/repository"
 	"github.com/gorilla/mux"
 	"gorm.io/gorm"

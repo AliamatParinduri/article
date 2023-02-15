@@ -10,7 +10,7 @@ import (
 
 type AuthUsecase interface {
 	LoginWithUsername(username string) (*entity.User, error)
-	Register(user *dto.AuthDTO) (*entity.User, error)
+	Register(user *dto.RegisterDTO) (*entity.User, error)
 }
 
 type service struct{}
@@ -24,7 +24,7 @@ func NewAuthUsecase(repp repository.AuthRepository) AuthUsecase {
 	return &service{}
 }
 
-func (s *service) Register(user *dto.AuthDTO) (*entity.User, error) {
+func (s *service) Register(user *dto.RegisterDTO) (*entity.User, error) {
 	var u = entity.User{}
 	err := smapping.FillStruct(&u, smapping.MapFields(&user))
 	if err != nil {
