@@ -1,10 +1,11 @@
 package controller
 
 import (
-	"article_app/entity"
 	"article_app/helper"
 	"article_app/modules/Auth/usecase"
+	"article_app/modules/auth/delivery/http/dto"
 	"encoding/json"
+	"github.com/go-playground/validator/v10"
 	"golang.org/x/crypto/bcrypt"
 	"net/http"
 )
@@ -19,6 +20,8 @@ type authController struct {
 }
 
 var (
+	validate *validator.Validate
+
 	authUsecase usecase.AuthUsecase
 )
 
@@ -32,13 +35,20 @@ func NewAuthController(useCase usecase.AuthUsecase, jwtUsecase usecase.JWTUsecas
 func (c *authController) Register(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
-	var user entity.User
+	var user dto.AuthDTO
 	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(helper.ServiceError{Message: "Error unmarshalling the request"})
 		return
 	}
 	defer r.Body.Close()
+
+	message := helper.CustomeValidateError(user)
+	if message != "" {
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(helper.ServiceError{Message: message})
+		return
+	}
 
 	hash, err := bcrypt.GenerateFromPassword([]byte(user.Password), 10)
 	if err != nil {
@@ -68,7 +78,7 @@ func (c *authController) Register(w http.ResponseWriter, r *http.Request) {
 
 func (c *authController) Login(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	var userInput entity.User
+	var userInput dto.AuthDTO
 
 	if err := json.NewDecoder(r.Body).Decode(&userInput); err != nil {
 		w.WriteHeader(http.StatusInternalServerError)

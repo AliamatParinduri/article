@@ -2,9 +2,10 @@ package usecase
 
 import (
 	"article_app/entity"
-	"github.com/dgrijalva/jwt-go"
 	"os"
 	"time"
+
+	"github.com/dgrijalva/jwt-go"
 )
 
 type JWTUsecase interface {
@@ -15,6 +16,7 @@ type JWTCustomClaims struct {
 	Id       int    `json:"id"`
 	Name     string `json:"name"`
 	Username string `json:"username"`
+	IsAdmin  bool   `json:-`
 	jwt.StandardClaims
 }
 
@@ -43,6 +45,7 @@ func (j *jwtUsecase) GenerateToken(user *entity.User) string {
 		user.ID,
 		user.Name,
 		user.Username,
+		user.IsAdmin,
 		jwt.StandardClaims{
 			ExpiresAt: time.Now().Add(time.Minute * 60).Unix(),
 			Issuer:    j.issuer,
