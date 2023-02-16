@@ -13,7 +13,7 @@ func UserFaker(db *gorm.DB) *entity.User {
 		ID:        1,
 		Name:      faker.FirstName(),
 		Username:  faker.LastName(),
-		Password:  "$2y$10$92ixunpkjo0roq5bymi.ye4okoea3ro9llc/.og/at2.uhewg/igi",
+		Password:  "$2a$10$GAPngBcZY5xouanHXSYQCuFcT8ANkG1DhmCoFHa.E0rUvQ30Vw51S", // password
 		IsAdmin:   true,
 		CreatedAt: time.Time{},
 		UpdatedAt: time.Time{},

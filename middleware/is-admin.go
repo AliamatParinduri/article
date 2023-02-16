@@ -3,7 +3,6 @@ package middleware
 import (
 	"article_app/helper"
 	"encoding/json"
-	"fmt"
 	"net/http"
 )
 
@@ -12,7 +11,6 @@ func AuthorizeIsAdmin(next http.HandlerFunc) http.HandlerFunc {
 		w.Header().Set("Content-Type", "application/json")
 
 		userAdmin := r.Header.Get("userAdmin")
-		fmt.Println(userAdmin == "false")
 
 		if userAdmin == "false" {
 			w.WriteHeader(http.StatusUnauthorized)

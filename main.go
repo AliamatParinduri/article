@@ -3,6 +3,8 @@ package main
 import (
 	"article_app/helper"
 	auth "article_app/modules/auth/delivery/http"
+	tag "article_app/modules/tag/delivery/http"
+	user "article_app/modules/user/delivery/http"
 	"article_app/repository"
 	"encoding/json"
 	"flag"
@@ -38,6 +40,8 @@ func main() {
 	})
 
 	auth.AuthRouter(r)
+	user.UserRouter(r)
+	tag.TagRouter(r)
 
 	flag.Parse()
 	arg := flag.Arg(0)

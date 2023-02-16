@@ -7,5 +7,6 @@ type Model struct {
 func RegisterModelPG() []Model {
 	return []Model{
 		{Model: User{}},
+		{Model: Tag{}},
 	}
 }

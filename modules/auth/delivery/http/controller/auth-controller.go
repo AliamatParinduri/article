@@ -4,6 +4,7 @@ import (
 	"article_app/helper"
 	"article_app/modules/auth/delivery/http/dto"
 	"article_app/modules/auth/usecase"
+	usecase2 "article_app/modules/jwt/usecase"
 	"encoding/json"
 	"github.com/go-playground/validator/v10"
 	"golang.org/x/crypto/bcrypt"
@@ -16,16 +17,15 @@ type AuthController interface {
 }
 
 type authController struct {
-	jwtUsecase usecase.JWTUsecase
+	jwtUsecase usecase2.JWTUsecase
 }
 
 var (
-	validate *validator.Validate
-
+	validate    *validator.Validate
 	authUsecase usecase.AuthUsecase
 )
 
-func NewAuthController(useCase usecase.AuthUsecase, jwtUsecase usecase.JWTUsecase) AuthController {
+func NewAuthController(useCase usecase.AuthUsecase, jwtUsecase usecase2.JWTUsecase) AuthController {
 	authUsecase = useCase
 	return &authController{
 		jwtUsecase: jwtUsecase,
