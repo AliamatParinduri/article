@@ -3,8 +3,8 @@ package postgres
 import (
 	"article_app/entity"
 	"errors"
-	"fmt"
 	"gorm.io/gorm"
+	"strconv"
 )
 
 type Server struct {
@@ -53,7 +53,7 @@ func (s *Server) UpdateTag(id string, tag *entity.Tag) (*entity.Tag, error) {
 	if rows := s.Conn.Where("id = ?", id).Updates(&tag).RowsAffected; rows == 0 {
 		return nil, errors.New("Failed update data tag, record not found")
 	}
-	fmt.Println(tag)
+	tag.ID, _ = strconv.Atoi(id)
 	return tag, nil
 }
 

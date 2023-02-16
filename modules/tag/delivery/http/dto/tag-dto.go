@@ -1,9 +1,5 @@
 package dto
 
-type TagCreateDTO struct {
-	Name string `json:"name" validate:"required,min=3,max=25"`
-}
-type TagUpdateDTO struct {
-	ID   int    `json:"id"`
+type TagDTO struct {
 	Name string `json:"name" validate:"required,min=3,max=25"`
 }

@@ -79,7 +79,7 @@ func (c *tagController) GetTagByID(w http.ResponseWriter, r *http.Request) {
 func (c *tagController) CreateTag(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
-	var tag dto.TagCreateDTO
+	var tag dto.TagDTO
 	if err := json.NewDecoder(r.Body).Decode(&tag); err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(helper.ServiceError{Message: "Error unmarshalling the request"})
@@ -114,7 +114,7 @@ func (c *tagController) CreateTag(w http.ResponseWriter, r *http.Request) {
 func (c *tagController) UpdateTag(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
-	var tag dto.TagUpdateDTO
+	var tag dto.TagDTO
 	params := mux.Vars(r)
 	id := params["id"]
 

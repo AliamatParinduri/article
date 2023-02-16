@@ -11,8 +11,8 @@ import (
 type TagUsecase interface {
 	GetTags() ([]entity.Tag, error)
 	GetTagByID(id string) (*entity.Tag, error)
-	CreateTag(tag *dto.TagCreateDTO) (*entity.Tag, error)
-	UpdateTag(id string, tag *dto.TagUpdateDTO) (*entity.Tag, error)
+	CreateTag(tag *dto.TagDTO) (*entity.Tag, error)
+	UpdateTag(id string, tag *dto.TagDTO) (*entity.Tag, error)
 	DeleteTag(id string) error
 }
 
@@ -35,7 +35,7 @@ func (s *service) GetTagByID(id string) (*entity.Tag, error) {
 	return repo.GetTagByID(id)
 }
 
-func (s *service) CreateTag(tag *dto.TagCreateDTO) (*entity.Tag, error) {
+func (s *service) CreateTag(tag *dto.TagDTO) (*entity.Tag, error) {
 	var u = entity.Tag{}
 	err := smapping.FillStruct(&u, smapping.MapFields(&tag))
 	if err != nil {
@@ -44,7 +44,7 @@ func (s *service) CreateTag(tag *dto.TagCreateDTO) (*entity.Tag, error) {
 	return repo.CreateTag(&u)
 }
 
-func (s *service) UpdateTag(id string, tag *dto.TagUpdateDTO) (*entity.Tag, error) {
+func (s *service) UpdateTag(id string, tag *dto.TagDTO) (*entity.Tag, error) {
 	var u = entity.Tag{}
 	err := smapping.FillStruct(&u, smapping.MapFields(&tag))
 	if err != nil {

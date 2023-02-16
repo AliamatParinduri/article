@@ -3,6 +3,7 @@ package main
 import (
 	"article_app/helper"
 	auth "article_app/modules/auth/delivery/http"
+	post "article_app/modules/post/delivery/http"
 	tag "article_app/modules/tag/delivery/http"
 	user "article_app/modules/user/delivery/http"
 	"article_app/repository"
@@ -42,6 +43,7 @@ func main() {
 	auth.AuthRouter(r)
 	user.UserRouter(r)
 	tag.TagRouter(r)
+	post.PostRouter(r)
 
 	flag.Parse()
 	arg := flag.Arg(0)

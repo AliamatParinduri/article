@@ -4,6 +4,7 @@ import (
 	"article_app/entity"
 	"errors"
 	"gorm.io/gorm"
+	"strconv"
 )
 
 type Server struct {
@@ -52,6 +53,7 @@ func (s *Server) UpdateUser(id string, user *entity.User) (*entity.User, error) 
 	if rows := s.Conn.Where("is_admin = false").Where("is_admin = false").Where("id = ?", id).Updates(&user).RowsAffected; rows == 0 {
 		return nil, errors.New("Failed update data user, record not found")
 	}
+	user.ID, _ = strconv.Atoi(id)
 	return user, nil
 }
 
