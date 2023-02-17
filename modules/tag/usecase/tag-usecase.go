@@ -2,17 +2,14 @@ package usecase
 
 import (
 	"article_app/entity"
-	"article_app/modules/tag/delivery/http/dto"
 	repository "article_app/modules/tag/repository/postgres"
-	"github.com/mashingan/smapping"
-	"log"
 )
 
 type TagUsecase interface {
 	GetTags() ([]entity.Tag, error)
 	GetTagByID(id string) (*entity.Tag, error)
-	CreateTag(tag *dto.TagDTO) (*entity.Tag, error)
-	UpdateTag(id string, tag *dto.TagDTO) (*entity.Tag, error)
+	CreateTag(tag *entity.Tag) (*entity.Tag, error)
+	UpdateTag(id string, tag *entity.Tag) (*entity.Tag, error)
 	DeleteTag(id string) error
 }
 
@@ -35,22 +32,12 @@ func (s *service) GetTagByID(id string) (*entity.Tag, error) {
 	return repo.GetTagByID(id)
 }
 
-func (s *service) CreateTag(tag *dto.TagDTO) (*entity.Tag, error) {
-	var u = entity.Tag{}
-	err := smapping.FillStruct(&u, smapping.MapFields(&tag))
-	if err != nil {
-		log.Fatalf("failed map: %v", err)
-	}
-	return repo.CreateTag(&u)
+func (s *service) CreateTag(tag *entity.Tag) (*entity.Tag, error) {
+	return repo.CreateTag(tag)
 }
 
-func (s *service) UpdateTag(id string, tag *dto.TagDTO) (*entity.Tag, error) {
-	var u = entity.Tag{}
-	err := smapping.FillStruct(&u, smapping.MapFields(&tag))
-	if err != nil {
-		log.Fatalf("failed map: %v", err)
-	}
-	return repo.UpdateTag(id, &u)
+func (s *service) UpdateTag(id string, tag *entity.Tag) (*entity.Tag, error) {
+	return repo.UpdateTag(id, tag)
 }
 
 func (s *service) DeleteTag(id string) error {

@@ -8,6 +8,8 @@ import (
 	"encoding/json"
 	"github.com/go-playground/validator/v10"
 	"github.com/gorilla/mux"
+	"github.com/mashingan/smapping"
+	"log"
 	"net/http"
 )
 
@@ -94,7 +96,13 @@ func (c *tagController) CreateTag(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	result, err := tagUsecase.CreateTag(&tag)
+	var u = entity.Tag{}
+	err := smapping.FillStruct(&u, smapping.MapFields(&tag))
+	if err != nil {
+		log.Fatalf("failed map: %v", err)
+	}
+
+	result, err := tagUsecase.CreateTag(&u)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(w).Encode(helper.ServiceError{Message: "Error add tag"})
@@ -132,7 +140,13 @@ func (c *tagController) UpdateTag(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	result, err := tagUsecase.UpdateTag(id, &tag)
+	var u = entity.Tag{}
+	err := smapping.FillStruct(&u, smapping.MapFields(&tag))
+	if err != nil {
+		log.Fatalf("failed map: %v", err)
+	}
+
+	result, err := tagUsecase.UpdateTag(id, &u)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(w).Encode(helper.ServiceError{Message: "Error: " + err.Error()})
